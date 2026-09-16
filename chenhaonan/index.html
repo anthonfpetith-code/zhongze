@@ -74,6 +74,12 @@
   .hero{display:grid;grid-template-columns:1fr 310px;gap:clamp(36px,6vw,72px);align-items:center}
   .hero-tag{font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--tint);
     text-transform:uppercase;margin-bottom:14px}
+  .cert-badge{display:inline-flex;align-items:center;gap:9px;margin-top:18px;padding:8px 18px;
+    border-radius:999px;border:1px solid color-mix(in srgb,var(--tint) 42%,transparent);
+    background:color-mix(in srgb,var(--tint) 8%,transparent);color:var(--tint);
+    font-size:13px;font-weight:600;letter-spacing:.06em}
+  .cert-dot{width:7px;height:7px;border-radius:50%;background:var(--tint);flex:none;
+    box-shadow:0 0 0 3px color-mix(in srgb,var(--tint) 18%,transparent)}
   h1{font-size:clamp(46px,8vw,70px);font-weight:700;letter-spacing:-.02em;line-height:1.06}
   .roles{margin-top:16px;display:flex;flex-direction:column;gap:5px}
   .role{font-size:clamp(14px,2.4vw,16.5px);color:var(--ink-dim)}
@@ -279,6 +285,7 @@
         <div class="role"><b>实战派短视频导师</b></div>
         <div class="role">AIGC 讲师 · <b>10 年传统影视行业经验</b></div>
       </div>
+      <div class="cert-badge rise d3"><span class="cert-dot"></span>中广有线指定培训师</div>
       <div class="motto rise d3">
         <p>从传统影视到 <b>AIGC 内容创作</b>的成功转型者——帮助创作者实现<b>降本增效</b>与<b>创新突破</b>。</p>
       </div>
