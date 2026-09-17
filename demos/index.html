@@ -117,6 +117,19 @@
     border:1px solid rgba(255,255,255,.32);transition:transform .35s cubic-bezier(.22,1,.36,1)}
   .vcard:hover .play-orb .orb{transform:scale(1.06)}
   .play-orb .orb svg{width:22px;height:22px;fill:#fff;margin-left:3px}
+
+  /* ===== 卡片下载按钮（右上角毛玻璃，触屏常显） ===== */
+  .dl-btn{position:absolute;top:14px;right:14px;z-index:3;width:34px;height:34px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;text-decoration:none;
+    background:rgba(255,255,255,.13);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.3);
+    opacity:0;transform:translateY(-4px);
+    transition:opacity .3s ease,transform .3s ease,background .3s ease}
+  .vcard:hover .dl-btn,.dl-btn:focus-visible{opacity:1;transform:none}
+  .dl-btn:hover{background:rgba(255,255,255,.3)}
+  .dl-btn svg{width:15px;height:15px;stroke:#fff;stroke-width:2.2;fill:none;
+    stroke-linecap:round;stroke-linejoin:round}
+  @media (hover:none){.dl-btn{opacity:.92;transform:none}}
   .vcard .body{padding:18px 20px 20px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
   .vcard .name{font-size:17px;font-weight:700;letter-spacing:-.01em;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -140,7 +153,14 @@
   .modal-grade.b{background:var(--b-bronze);color:#1A0F08}
   .modal-title{font-size:clamp(16px,2.4vw,21px);font-weight:700;letter-spacing:-.01em;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .modal-close{margin-left:auto;flex-shrink:0;width:38px;height:38px;border-radius:50%;
+  .modal-dl{margin-left:auto;flex-shrink:0;display:inline-flex;align-items:center;gap:7px;height:38px;
+    padding:0 16px;border-radius:999px;border:1px solid var(--line-hi);background:rgba(255,255,255,.07);
+    color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;letter-spacing:.02em;
+    transition:background .3s ease,transform .3s ease}
+  .modal-dl:hover{background:rgba(255,255,255,.15);transform:translateY(-1px)}
+  .modal-dl svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.2;fill:none;
+    stroke-linecap:round;stroke-linejoin:round}
+  .modal-close{flex-shrink:0;width:38px;height:38px;border-radius:50%;
     border:1px solid var(--line-hi);background:rgba(255,255,255,.07);color:var(--ink);
     font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;
     transition:background .3s ease,transform .3s ease}
@@ -181,7 +201,7 @@
 <header class="wrap">
   <div class="hero-tag rise">AIGC Demo Reel</div>
   <h1 class="rise">Demos <span class="thin">作品展示</span></h1>
-  <p class="sub rise">团队产出的 <b>S 级 / A 级</b> demo 作品库。<b>点击卡片</b>即可在线播放。</p>
+  <p class="sub rise">团队产出的 <b>S 级 / A 级</b> demo 作品库。<b>点击卡片</b>在线播放，<b>右上角图标</b>可下载。</p>
   <div class="count-row rise">
     <div class="count-pill s"><b>5</b> 部 S 级作品</div>
     <div class="count-pill a"><b>9</b> 部 A 级作品</div>
@@ -379,6 +399,8 @@
     <div class="modal-head">
       <span class="modal-grade" id="modal-grade">S</span>
       <span class="modal-title" id="modal-title"></span>
+      <a class="modal-dl" id="modal-dl" href="#" target="_blank" rel="noopener" download
+        aria-label="下载视频"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载</a>
       <button class="modal-close" id="modal-close" aria-label="关闭">✕</button>
     </div>
     <video id="modal-video" controls playsinline></video>
@@ -400,6 +422,7 @@
   var mTitle   = document.getElementById('modal-title');
   var mGrade   = document.getElementById('modal-grade');
   var mClose   = document.getElementById('modal-close');
+  var mDl      = document.getElementById('modal-dl');
   var cards    = document.querySelectorAll('.vcard');
 
   function openPlayer(url, title, grade){
@@ -407,6 +430,8 @@
     mTitle.textContent = title;
     mGrade.textContent = grade;
     mGrade.className = 'modal-grade ' + grade.toLowerCase();
+    mDl.href = url;
+    mDl.setAttribute('download', title + '.mp4');
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
     var p = mv.play();
@@ -435,6 +460,24 @@
       });
     })(cards[i]);
   }
+
+  /* ---- 卡片右上角下载按钮（真实 <a>：左键新标签打开，右键"链接另存为"即下载） ---- */
+  cards.forEach(function(card){
+    var url   = card.getAttribute('data-url');
+    var title = card.getAttribute('data-title') || 'demo';
+    var a = document.createElement('a');
+    a.className = 'dl-btn';
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.setAttribute('download', title + '.mp4');
+    a.title = '下载 · 右键可"链接另存为"';
+    a.setAttribute('aria-label', '下载 ' + title);
+    a.innerHTML = '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+    a.addEventListener('click', function(e){ e.stopPropagation(); });
+    a.addEventListener('keydown', function(e){ e.stopPropagation(); });
+    card.querySelector('.thumb').appendChild(a);
+  });
 
   mClose.addEventListener('click', closePlayer);
   modal.addEventListener('click', function(e){
